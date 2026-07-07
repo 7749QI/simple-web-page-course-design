@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}数据统计图表 - {{vote.title}}{% endblock %}
+
+{% block content %}
+<div class="card card-beauty mb-4">
+    <div class="card-header">
+        <h4 class="mb-0"><i class="fa fa-line-chart me-2"></i>{{vote.title}} 投票数据可视化</h4>
+    </div>
+    <div class="card-body">
+        <p class="text-secondary">实时票数分布饼图 + 票数对比柱状图</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card card-beauty">
+            <div class="card-body">
+                <h5 class="text-center mb-3">票数占比饼图</h5>
+                <div id="pie" style="width:100%;height:400px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-beauty">
+            <div class="card-body">
+                <h5 class="text-center mb-3">票数对比柱状图</h5>
+                <div id="bar" style="width:100%;height:400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+let pieChart = echarts.init(document.getElementById("pie"));
+let barChart = echarts.init(document.getElementById("bar"));
+
+fetch("/chart_data/{{vote.id}}")
+.then(res=>res.json())
+.then(data=>{
+    const pieOpt = {
+        tooltip:{trigger:"item"},
+        legend:{orient:"vertical",left:"left"},
+        series:[{
+            type:"pie",radius:"60%",data:data
+        }]
+    };
+    pieChart.setOption(pieOpt);
+
+    const barOpt = {
+        xAxis:{type:"category",data:data.map(item=>item.name)},
+        yAxis:{type:"value"},
+        series:[{type:"bar",data:data.map(item=>item.value),itemStyle:{color:"#4158D0"}}]
+    };
+    barChart.setOption(barOpt);
+})
+</script>
+{% endblock %}

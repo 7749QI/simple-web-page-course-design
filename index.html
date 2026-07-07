@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}首页 - 全部投票{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold text-dark">
+            <i class="fa fa-list-alt text-primary"></i> 全部投票活动
+        </h2>
+        <p class="text-secondary">浏览并参与各类投票，查看实时数据统计</p>
+    </div>
+    <div class="col-md-4 text-md-end">
+        {% if current_user.is_authenticated %}
+        <a href="{{url_for('create_vote')}}" class="btn btn-primary btn-lg">
+            <i class="fa fa-plus"></i> 新建投票
+        </a>
+        {% else %}
+        <a href="{{url_for('login')}}" class="btn btn-outline-primary">登录后创建投票</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if votes|length == 0 %}
+<div class="card card-beauty p-5 text-center">
+    <i class="fa fa-file-text-o text-secondary fs-1 mb-3"></i>
+    <h4 class="text-secondary">暂无投票数据</h4>
+    <p>登录账号创建第一个投票活动吧</p>
+</div>
+{% else %}
+<div class="row g-4">
+    {% for v in votes %}
+    <div class="col-lg-4 col-md-6">
+        <div class="card card-beauty h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fa fa-check-square-o me-2"></i>{{v.title}}</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-secondary">{{v.desc or "暂无描述"}}</p>
+                <p class="mb-1"><i class="fa fa-list-ul text-primary"></i> 选项数量：{{v.options|length}}</p>
+                <p><i class="fa fa-users text-success"></i> 总票数：{{v.options|sum(attribute='count')}}</p>
+            </div>
+            <div class="card-footer bg-white d-flex gap-2 flex-wrap">
+                <a href="{{url_for('vote_detail',vid=v.id)}}" class="btn btn-sm btn-primary flex-grow-1">
+                    <i class="fa fa-vote-yea"></i> 去投票
+                </a>
+                <a href="{{url_for('chart_page',vid=v.id)}}" class="btn btn-sm btn-success flex-grow-1">
+                    <i class="fa fa-pie-chart"></i> 数据图表
+                </a>
+                {% if current_user.is_authenticated and (current_user.is_admin or current_user.id == v.creator_id) %}
+                <a href="{{url_for('del_vote',vid=v.id)}}" class="btn btn-sm btn-danger flex-grow-1">
+                    <i class="fa fa-trash"></i> 删除
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

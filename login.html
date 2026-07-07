@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}用户登录{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5 col-md-7">
+        <div class="card card-beauty">
+            <div class="card-header text-center">
+                <h4 class="mb-0"><i class="fa fa-sign-in me-2"></i>账号登录</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fa fa-user text-primary"></i> 用户名</label>
+                        <input type="text" name="username" class="form-control" placeholder="请输入账号" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label"><i class="fa fa-lock text-primary"></i> 密码</label>
+                        <input type="password" name="password" class="form-control" placeholder="请输入密码" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">
+                        <i class="fa fa-check"></i> 立即登录
+                    </button>
+                </form>
+                <div class="text-center mt-4 text-secondary">
+                    没有账号？<a href="{{url_for('register')}}" class="text-primary">立即注册</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

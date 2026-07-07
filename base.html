@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}在线投票管理系统{% endblock %}</title>
+    <!-- Bootstrap5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        /* 全局高级绿色主题 升级美化 */
+        *{
+            transition: all 0.3s ease;
+        }
+        body{
+            background-color: #f6fbf9;
+            font-family: "Microsoft YaHei",sans-serif;
+            background-image: radial-gradient(#e2f6ee 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        /* 绿色渐变导航栏 双层光影 */
+        .nav-gradient{
+            background: linear-gradient(135deg,#27ae60 0%,#2ecc71 100%);
+            box-shadow: 0 4px 18px rgba(39, 174, 96, 0.3);
+        }
+        .nav-link{
+            color:#fff !important;
+            opacity:0.9;
+            position: relative;
+        }
+        .nav-link::after{
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            transition: 0.3s;
+        }
+        .nav-link:hover{
+            opacity:1;
+            transform: translateY(-2px);
+            text-shadow: 0 0 8px rgba(255,255,255,0.4);
+        }
+        .nav-link:hover::after{
+            width: 80%;
+        }
+        /* 卡片美化绿色系 加厚阴影层次感 */
+        .card-beauty{
+            border:none;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(0,120,60,0.09);
+            overflow: hidden;
+        }
+        .card-beauty:hover{
+            transform: translateY(-4px);
+            box-shadow: 0 12px 36px rgba(39, 174, 96, 0.12);
+        }
+        .card-header{
+            border-radius: 18px 18px 0 0 !important;
+            background: linear-gradient(135deg,#219653,#34d080);
+            color:#fff;
+        }
+        /* 按钮全局绿色美化 渐变立体 */
+        .btn{
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .btn-primary{
+            background: linear-gradient(135deg,#27ae60,#2ecc71);
+            border: none;
+        }
+        .btn-primary:hover{
+            background: linear-gradient(135deg,#219653,#27ae60);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(39, 174, 96, 0.25);
+        }
+        .btn-success{
+            background: linear-gradient(135deg,#2ecc71,#58d68d);
+            border: none;
+        }
+        .btn-success:hover{
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(46, 204, 113, 0.25);
+        }
+        .btn-danger{
+            background: linear-gradient(135deg,#e74c3c,#ec7063);
+            border: none;
+        }
+        .btn-outline-secondary{
+            border: 1px solid #27ae60;
+            color: #27ae60;
+        }
+        .btn-outline-secondary:hover{
+            background: #27ae60;
+            color: white;
+        }
+        /* 表单输入框美化绿色聚焦 */
+        .form-control{
+            border-radius:12px;
+            padding:11px 16px;
+            border:1px solid #d0e9dd;
+            background: #ffffffdd;
+        }
+        .form-control:focus{
+            box-shadow:0 0 0 4px rgba(39, 174, 96,0.2);
+            border-color:#27ae60;
+            background: #fff;
+        }
+        /* 底部栏 简约绿色渐变线条 */
+        .footer{
+            background:#1f2924;
+            margin-top:100px;
+            padding:24px 0;
+        }
+        .footer-line{
+            width: 45%;
+            height: 4px;
+            background: linear-gradient(90deg,transparent,#2ecc71,transparent);
+            margin: 0 auto;
+            border-radius: 4px;
+        }
+        /* 提示弹窗动画 */
+        .alert{
+            border-radius:14px;
+            animation: fadeIn 0.4s ease;
+            border: none;
+        }
+        @keyframes fadeIn{
+            from{opacity:0;transform:translateY(-12px)}
+            to{opacity:1;transform:translateY(0)}
+        }
+        /* 右下角隐蔽字符 djq+7 低透明度 */
+        .secret-mark{
+            position: fixed;
+            right: 22px;
+            bottom: 24px;
+            font-size: 14px;
+            color: rgba(39, 174, 96, 0.2);
+            letter-spacing: 1px;
+            user-select: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg nav-gradient sticky-top">
+    <div class="container">
+        <a class="navbar-brand text-white fw-bold fs-3" href="{{url_for('index')}}">
+            <i class="fa fa-bar-chart me-2"></i>智慧投票系统
+        </a>
+        <button class="navbar-toggler border border-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('index')}}"><i class="fa fa-home me-1"></i>首页</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('message_board')}}"><i class="fa fa-comments me-1"></i>留言板</a>
+                </li>
+                {% if current_user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('create_vote')}}"><i class="fa fa-plus-circle me-1"></i>创建投票</a>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link"><i class="fa fa-user me-1"></i>{{current_user.username}}
+                        {% if current_user.is_admin %}<span class="badge bg-warning text-dark ms-1">管理员</span>{% endif %}
+                    </span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('logout')}}"><i class="fa fa-sign-out me-1"></i>退出</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('login')}}"><i class="fa fa-sign-in me-1"></i>登录</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{url_for('register')}}"><i class="fa fa-user-plus me-1"></i>注册</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- 消息提示框 -->
+<div class="container mt-4">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for cat,msg in messages %}
+                <div class="alert alert-{{cat}} alert-dismissible fade show">
+                    {{msg}}
+                    <button class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<!-- 主体内容 -->
+<main class="container py-5">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- 底部：无文字，仅绿色渐变装饰条 -->
+<footer class="footer text-center">
+    <div class="footer-line"></div>
+</footer>
+
+<!-- 右下角隐蔽标记 djq+7 -->
+<div class="secret-mark">djq+7</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block script %}{% endblock %}
+</body>
+</html>

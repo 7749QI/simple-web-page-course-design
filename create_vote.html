@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}创建新投票{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-beauty">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fa fa-plus-circle me-2"></i>创建投票活动</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">投票标题</label>
+                        <input type="text" name="title" class="form-control form-control-lg" placeholder="输入投票主题" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">活动描述</label>
+                        <textarea name="desc" class="form-control" rows="3" placeholder="简单介绍本次投票用途"></textarea>
+                    </div>
+                    <!-- 新增私有投票勾选框 -->
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" name="is_private" class="form-check-input" id="privateCheck">
+                        <label class="form-check-label text-dark" for="privateCheck">
+                            <i class="fa fa-lock text-success"></i> 设为私有投票（仅自己可见）
+                        </label>
+                    </div>
+                    <div class="mb-4" id="opt_box">
+                        <label class="form-label fw-bold">投票选项（至少2项）</label>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text bg-success text-white">1</span>
+                            <input type="text" name="option" class="form-control" placeholder="选项内容" required>
+                        </div>
+                        <div class="input-group mb-2">
+                            <span class="input-group-text bg-success text-white">2</span>
+                            <input type="text" name="option" class="form-control" placeholder="选项内容" required>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addOpt()" class="btn btn-outline-secondary mb-4">
+                        <i class="fa fa-plus"></i> 添加更多选项
+                    </button>
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">
+                        <i class="fa fa-check"></i> 发布投票
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+let num = 3;
+function addOpt(){
+    const box = document.getElementById("opt_box");
+    let html = `<div class="input-group mb-2">
+        <span class="input-group-text bg-success text-white">${num}</span>
+        <input type="text" name="option" class="form-control" placeholder="选项内容">
+    </div>`;
+    box.insertAdjacentHTML("beforeend",html);
+    num++;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{vote.title}} - 投票{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card card-beauty">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fa fa-check-square-o me-2"></i>{{vote.title}}</h3>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-secondary fs-5 mb-4">{{vote.desc or "无活动描述"}}</p>
+                {% if has_voted %}
+                <div class="alert alert-success">
+                    <i class="fa fa-check-circle"></i> 你已经完成本次投票，无法重复投票
+                </div>
+                {% else %}
+                <form method="post">
+                    <h5 class="mb-3">请选择一项进行投票：</h5>
+                    {% for opt in vote.options %}
+                    <div class="form-check mb-3 p-3 border rounded-3 hover-shadow">
+                        <input class="form-check-input" type="radio" name="opt" value="{{opt.id}}" id="o{{opt.id}}" required>
+                        <label class="form-check-label fs-5" for="o{{opt.id}}">
+                            {{opt.content}}
+                            <span class="text-secondary ms-2">当前票数：{{opt.count}}</span>
+                        </label>
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary btn-lg mt-3">
+                        <i class="fa fa-paper-plane"></i> 提交投票
+                    </button>
+                </form>
+                {% endif %}
+                <hr class="my-4">
+                <a href="{{url_for('chart_page',vid=vote.id)}}" class="btn btn-success">
+                    <i class="fa fa-pie-chart"></i> 查看完整数据统计图
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
